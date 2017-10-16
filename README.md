@@ -1,2 +1,2 @@
 # euler
-Project euler solutions in haskel
+Project euler solutions in haskell.
