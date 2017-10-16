@@ -11,3 +11,5 @@ smallest' (num, True) = num
 smallest' (num, False) = smallest' (num+255255, isDivis $ num+255255)
 
 smallest = smallest' (255255, False)
+
+main = do print $ smallest

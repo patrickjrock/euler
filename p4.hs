@@ -13,3 +13,5 @@ numdrome = palindrome . digitize
 list = [x |a <- [1..999], b <- [1..999], let x = a*b]
 
 largestDrome = last $ sort $ filter numdrome list
+
+main = do print $ largestDrome
