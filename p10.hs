@@ -1,15 +1,21 @@
-sieve :: [Int] -> Int -> Bool
-sieve [] x = True 
-sieve ps x = if mod x (head ps) == 0 then False else sieve (tail ps) x
+checkFactors :: Integer -> Integer -> Bool
+checkFactors n f 
+    | f > (floor $ sqrt $ fromIntegral $ n) = True
+    | mod n f == 0 = False
+    | otherwise = checkFactors n (f+2)
 
-nextPrime' ps n = if sieve ps n then n else nextPrime' ps (n+1)
-nextPrime :: [Int] -> [Int]
-nextPrime ps = ps ++ [nextPrime' ps (last ps)]
+isPrime :: Integer -> Bool
+isPrime 1 = False
+isPrime 2 = True
+isPrime 3 = True
+isPrime 5 = True
+isPrime n = if mod n 2 == 0 || mod n 3 == 0
+            then False 
+            else checkFactors n 5
 
-getPrimes' limit ps = if p < limit
-                      then getPrimes' limit (ps ++ [p])
-                      else ps
-                      where p = last $ nextPrime ps 
-getPrimes limit = getPrimes' limit [2]
+sumPrimes 0 s = s
+sumPrimes n s = if isPrime n 
+                then sumPrimes (n-1) (s+n)
+                else sumPrimes (n-1) s
 
-main = do print $ sum $ getPrimes 2000000
+main = do print $ sumPrimes 2000000 0
