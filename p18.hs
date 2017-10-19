@@ -11,14 +11,16 @@ paths 0 = [[0], [1]]
 paths n = concatMap extend $ paths (n-1)
   where extend path = [0:path, 1:path]
 
-convertPath [x] = [x]
-convertPath (x:xs) = x : (convertPath $ map (+1) xs)
+
+-- this is broken
+convertPath :: Int -> [Int] -> [Int]
+convertPath p [x] = [x+p]
+convertPath p (x:xs) = (p+x) : (convertPath (p+x) xs)
 
 route t p  = (head $ head t) : path
   where path = zipWith ($) (map (flip (!!)) p) (tail t)
 
-allPaths s = map (route (parse s)) (paths 13)
-
+allPaths s = map (route (parse s)) (map (convertPath 0) (paths 13))
 
 
 main = do
