@@ -1,11 +1,11 @@
 import Data.Char
 
+isTeen x = x > 10 && x < 20
 digitize x = map digitToInt $ show x 
-
-fix [x] = [x]
-fix [x, y] = [10*x, y]
-fix [x,y,z] = [100*x, 10*y, z]
-
+separate x 
+  | isTeen $ mod x 100 = (100 * (head digits)) : [mod x 100]
+  | otherwise = reverse $ zipWith (*) [1, 10, 100] (reverse digits)
+  where digits = digitize x
 wordify :: Int -> String
 wordify 0 = ""
 wordify 1 = "one"
@@ -38,6 +38,9 @@ wordify 90 = "ninety"
 wordify 1000 = "onethousand"
 
 wordify n 
-  | mod n 100 == 0 = (wordify (div n 100)) ++ "hundredand"
-  | otherwise = foldr (++) [] (map wordify digits)
-  where digits = (fix $ digitize n)
+  | n < 100 = concatMap wordify digits
+  | mod n 100 == 0 = wordify (div n 100) ++ "hundred"
+  | otherwise = concatMap wordify $ digits
+  where digits = separate n 
+
+main = do print $ (9*99*3) + (length $ concatMap wordify [1..1000])
