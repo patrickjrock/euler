@@ -13,7 +13,9 @@ abundants = filter abundant [1..]
 abundant' = map abundant [1..]
 fastAbundant n = abundant' !! (n-1)
 
---sumOfAbundant :: Int -> Bool
-sumOfAbundant n = any fastAbundant [n-ab | ab <- filter (<n) abundants]
+sumOfAbundant :: Int -> Bool
+sumOfAbundant n = any fastAbundant [n-ab | ab <- takeWhile (<n) abundants]
+
+p23 n = sum $ filter (not . sumOfAbundant) [1..n]
 
 main = do print $ sum $ filter (not . sumOfAbundant) [1..20161]
