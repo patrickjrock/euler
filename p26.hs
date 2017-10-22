@@ -1,4 +1,6 @@
 import Data.Maybe
+import Data.List 
+import Control.Applicative
 
 type Numerator = Int
 type Denominator = Int
@@ -26,8 +28,14 @@ division' n d
   | mod n d == 0 = [(div n d, (n, d))]
   | otherwise = ((div n d), (n,d)) : (division' (remain n d) d)
 
+-- finds cycles of length n 
+findCycle xs n = findCycle' xs 0 n
 
-
+findCycle' [] _ n = Nothing
+findCycle' (x:xs) p n
+  | i /= Nothing = liftA2 (,) (Just p) (fmap (+(1+p)) i)
+  | otherwise = findCycle' xs (p+1)
+  where i = elemIndex x $ take n xs
 
 -- division algorithm has two steps 
 -- 1. given a/b compute div a b and append to c
