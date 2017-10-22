@@ -20,10 +20,12 @@ division n d
   | otherwise = ((div n d) : (fst rec), snd rec)
   where rec = (division ((mod n d) * 10 ) d) 
 
-division' :: Int -> Int -> [Int]
+remain n d = (mod n d) * 10
+--division' :: Int -> Int -> [Int]
 division' n d 
-  | mod n d == 0 = [div n d]
-  | otherwise = (div n d) : (division' ((mod n d) * 10 ) d)
+  | mod n d == 0 = [(div n d, (n, d))]
+  | otherwise = ((div n d), (n,d)) : (division' (remain n d) d)
+
 
 
 
