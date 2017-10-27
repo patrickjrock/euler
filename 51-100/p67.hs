@@ -21,12 +21,12 @@ triangulars = map triangular [1..]
 
 
 maxPath l (0,0) = getv l (0,0)
-maxPath l (a,b) = maxs !! i
-  where maxs = map (maxPath' l) [(a,b) | a <- [0..99], b <- [0..a]]
-        i = (triangulars !! (a-1)) + b
-        maxPath' l (0,0) = getv l (0,0)
-        maxPath' l (a,b) = v + (maximum paths)
-        ancs = ancestors (a,b)
+maxPath l (a,b) = let maxs = map (maxPath' l) [(a,b) | a <- [0..99], b<-[0..a]] in maxs !! i
+  where i = (triangulars !! (a-1)) + b
+
+maxPath' l (0,0) = getv l (0,0)
+maxPath' l (a,b) = v + (maximum paths)
+  where ancs = ancestors (a,b)
         v = getv l (a,b)
         paths = map (maxPath l) ancs
 
