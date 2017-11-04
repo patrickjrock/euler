@@ -11,6 +11,11 @@ instance Show Number where
   show (Fraction a b) = "(" ++ show a ++ "/" ++ show b ++ ")"
   show (Sum a b) =  "(" ++ show a ++ "+" ++ show b ++ ")"
 
+instance Eq Number where
+  (==) (Whole a) (Whole b) = a == b
+  (==) (Fraction (Whole a) (Whole b)) (Fraction (Whole c) (Whole d)) = a*d == b*c
+  (==) f1 f2 = simplify f1 == simplify f2
+
 multF :: Number -> Number -> Number
 multF (Fraction a b) (Fraction c d) = Fraction (multF a c) (multF b d)
 multF (Whole a) (Whole b) = Whole (a*b)
@@ -33,7 +38,9 @@ simplify' (Whole a) = Whole a
 simplify' (Sum a b) = addF a b
 simplify' (Fraction (Whole a) (Whole b)) 
   | rem a b == 0 = Whole (div a b)
+  | c /= 1 = Fraction (Whole (div a c)) (Whole (div b c)) 
   | otherwise = Fraction (Whole a) (Whole b)
+  where c = gcd a b
 
 simplify' (Fraction a (Fraction b c)) = simplify' (multF a (Fraction c b))
 simplify' (Fraction a (Whole b)) = 
