@@ -1,16 +1,25 @@
 import Data.List
+import Data.Char
+import Data.List.Split
 
 data Suit = Hearts | Diamonds | Clubs | Spades deriving (Eq, Show)
 type Value = Int
 data Card = Card Suit Value deriving Show
 type Hand = [Card] 
-data Rank = HighCard Int | OnePair | TwoPair | ThreeKind | Straight |
+data Rank = HighCard | OnePair | TwoPair | ThreeKind | Straight |
             Flush | FullHouse | FourKind | StraightFlush |
-            RoyalFlush deriving Show
+            RoyalFlush deriving (Show, Eq, Ord)
 
+
+compareH (h1,h2) 
+  | rank h1 > rank h2 = True
+  | rank h2 > rank h1 = False
+  | rank h1 == rank h2 = highC h1 h2
+  where highC h1 h2 = (sort $ vs h1) > (sort $ vs h2)
+        vs h = map value h
+        
 twoPairHand = [Card Hearts 1, Card Diamonds 1, Card Hearts 2, Card Diamonds 2,
                Card Clubs 10]
-
 
 onePairHand = [Card Hearts 3, Card Diamonds 1, Card Hearts 2, Card Diamonds 2,
                Card Clubs 10]
@@ -36,6 +45,12 @@ royalFlush h = royal && same
 
 straightFlush h = (flush h) && (flush h)
 
+count a xs = length $ filter (==a) xs
+
+pairs h = filter isPair (nub vs)
+  where vs = map value h
+        isPair a = 2 == ((flip count) vs $ a)
+
 onePair h = 4 == (length $ nub $ map value h)
 twoPair h = 4 == (length $ filter (==2) $ zipWith ($) (map count vs) (take 5 $ repeat vs))
   where vs = map value h
@@ -49,12 +64,6 @@ fourKind = nKind 4
 
 fullHouse h = (threeKind h) && (onePair h)
 
-count :: Eq a => a -> [a] -> Int
-count _ [] = 0
-count x (y:ys) 
-  | x == y = 1 + (count x ys)
-  | otherwise = count x ys
-
 rank :: Hand -> Rank
 rank h 
   | royalFlush h = RoyalFlush
@@ -65,5 +74,27 @@ rank h
   | straight h = Straight
   | threeKind h = ThreeKind
   | twoPair h = TwoPair
-  | onePair h = OnePair
-  | otherwise = HighCard (maximum $ map value h)
+  | onePair h = OnePair 
+  | otherwise = HighCard 
+
+readV 'T' = 10
+readV 'J' = 11
+readV 'Q' = 12
+readV 'K' = 13
+readV 'A' = 14
+readV v = digitToInt v
+
+readCard :: String -> Card
+readCard [v,'H'] = Card Hearts (readV v)
+readCard [v,'D'] = Card Diamonds (readV v)
+readCard [v,'S'] = Card Spades (readV v)
+readCard [v,'C'] = Card Clubs (readV v)
+
+readHand :: String -> (Hand,Hand)
+readHand s = (map readCard (take 5 cs), map readCard (drop 5 cs))
+  where cs = splitOn " " s
+
+main = do 
+  f <- readFile "p054_poker.txt"
+  let lines = splitOn "\n" f
+  print $ length $ filter compareH $ map readHand (init lines)

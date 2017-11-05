@@ -7,7 +7,7 @@ import Control.Monad
 powerset :: [a] -> [[a]]
 powerset = filterM (const [True, False])
   
---digits :: Integer -> [Integer]
+digits :: Integral a => a -> [a]
 digits x = map digitToInt $ show x 
 
 palindrome :: Eq a => [a] -> Bool
@@ -16,6 +16,6 @@ palindrome xs = xs == (reverse xs)
 numdrome :: Integer -> Bool
 numdrome = palindrome . digits
 
---undigits :: [Integer] -> Integer
+undigits :: Integral a => [a] -> a
 undigits = read . concatMap show
 
