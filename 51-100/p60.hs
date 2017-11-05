@@ -10,10 +10,7 @@ undigits = read . concatMap show
 
 count a xs = length $ filter (==a) xs
 
-combinations :: Int -> [a] -> [[a]]
-combinations 0 _ = [[]]
-combinations n xs = [ xs !! i : x | i <- [0..(length xs)-1] 
-                                  , x <- combinations (n-1) (drop (i+1) xs) ]
+--------------------------------------
 
 candidate :: [Int] -> Bool
 candidate ps = and $ map isPrime cats
@@ -25,17 +22,24 @@ helper f p = filter isPrime ps
         ps = map undigits $ (tail . init) $ f ds
 
 prefixPrimes :: Int -> [Int]
-prefixPrimes p = filter isPrime ps
-  where ds = digits p
-        ps = map undigits $ (tail . init) $ inits ds
+prefixPrimes = helper inits
         
 suffixPrimes :: Int -> [Int]
-suffixPrimes p =  filter isPrime ps
-  where ds = digits p
-        ps = map undigits $ (tail . init) $ tails ds
+suffixPrimes = helper tails 
 
 pfs n = nub $ sort $ concatMap prefixPrimes $ take n primes
 sfs n = nub $ sort $ concatMap suffixPrimes $ take n primes
 
+
+-- given two primes test if they are a concatPair
+isPair :: Int -> Int -> Bool
+isPair p1 p2 = candidate [p1,p2] 
+
 -- prime numbers that appear as prefixes and suffixes of primes
 candidates n = intersect (pfs n) (sfs n)
+
+countPairs :: [Int] -> Int -> Int
+countPairs ps p = (length $ filter (isPair p) ps) 
+
+cPairs n = map (countPairs cs) cs
+  where cs = candidates n
