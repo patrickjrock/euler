@@ -33,8 +33,8 @@ prefixPrimes = helper inits
 suffixPrimes :: Int -> [Int]
 suffixPrimes = helper tails 
 
-pfs n = nub $ sort $ concatMap prefixPrimes $ take n primes
-sfs n = nub $ sort $ concatMap suffixPrimes $ take n primes
+pfs n = nub $ sort $ concatMap prefixPrimes $ takeWhile (<n) primes
+sfs n = nub $ sort $ concatMap suffixPrimes $ takeWhile (<n) primes
 
 -- prime numbers that appear as prefixes and suffixes of primes
 candidates n = intersect (pfs n) (sfs n)
@@ -43,6 +43,9 @@ candidates n = intersect (pfs n) (sfs n)
 -- this is a two prime family
 isPair :: Int -> Int -> Bool
 isPair p1 p2 = candidate [p1,p2] 
+
+pairs :: Int -> [Int]
+pairs p = filter (isPair p) $ takeWhile (<10000) primes
 
 countFamilys :: Int -> [Int] -> Int -> Int
 countFamilys 2 ps p = 1
@@ -75,12 +78,19 @@ cQuads n = map (countQuads cs) cs
 
 
 ----------------------------
-countFM _ _ [] = []
-countFM n i ps 
-  | length ps == i = []
-  | otherwise = if c == 0 then countFM n i (delete p ps) 
-                          else c : countFM n (i+1) ps
-  where c = (countFamilys n ps p)
-        p = ps !! i
 
-countFM' n m = countFM n 0 (candidates m)
+fams 2 m = filter candidate $ combinations 2 $ candidates m
+fams n m = filter candidate $ combs
+  where cs = nub $ concat $ fs
+        combs = (++) <$> (map (:[]) cs) <*> fs
+        fs = fams (n-1) m
+
+expandFamily :: Int -> [Int] -> [[Int]]
+expandFamily n f = filter candidate $ map (:f) ps
+  where ps = foldr1 intersect $ map (take n) $ map pairs f
+        fsize = length f
+
+main = do 
+  n <- getLine
+  m <- getLine
+  print $ fams (read n) (read m)
