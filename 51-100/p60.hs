@@ -85,9 +85,9 @@ fams n m = filter candidate $ combs
         combs = (++) <$> (map (:[]) cs) <*> fs
         fs = fams (n-1) m
 
-expandFamily :: Int -> [Int] -> [[Int]]
-expandFamily n f = filter candidate $ map (:f) ps
-  where ps = foldr1 intersect $ map (take n) $ map pairs f
+expandFamily :: [Int] -> [[Int]]
+expandFamily f = filter candidate $ map (:f) ps
+  where ps = takeWhile (<10000) primes 
         fsize = length f
 
 main = do 
