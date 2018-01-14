@@ -16,6 +16,11 @@ instance Eq Number where
   (==) (Fraction (Whole a) (Whole b)) (Fraction (Whole c) (Whole d)) = a*d == b*c
   (==) f1 f2 = simplify f1 == simplify f2
 
+denomF :: Number -> Integer
+denomF (Fraction _ x) = x
+denomF (Whole x) = x
+-- define on sum?
+
 multF :: Number -> Number -> Number
 multF (Fraction a b) (Fraction c d) = Fraction (multF a c) (multF b d)
 multF (Whole a) (Whole b) = Whole (a*b)
